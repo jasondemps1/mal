@@ -1,0 +1,4 @@
+...only doing minimum for now
+
+* TODO
+** Readline support in readline.c
