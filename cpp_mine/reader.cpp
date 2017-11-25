@@ -30,6 +30,7 @@ MalType* Read_Form(Reader & r)
 
         switch(tok[0]) {
         case '(': ret = Read_List(r); break;
+        case '[': ret = Read_Vector(r); break;
         default:  ret = Read_Atom(r);
         }
 
@@ -89,6 +90,30 @@ MalList* Read_List(Reader & r)
         return list;
 }
 
+MalVector* Read_Vector(Reader & r)
+{
+        FUNC_OUT;
+        if (r.End())
+                throw "No ']' to close Collection.";
+        std::string tok = r.Next();
+        MalVector* coll = new MalVector();
+
+        while (!r.End() && r.Peek() != "]") {
+                coll->data.push_back(Read_Form(r));
+                if (!r.End())
+                        tok = r.Next();
+        }
+
+        if (r.Peek() != "]") {
+                const char* str = "No ']' to close List.";
+                if (DEBUG)
+                        std::cout << str << std::endl;
+                throw str;
+        }
+
+        return coll;
+}
+
 std::vector<std::string> Tokenizer(std::string const & input)
 {
         FUNC_OUT;
@@ -134,6 +159,10 @@ std::vector<std::string> Tokenizer(std::string const & input)
                                 match.clear();
                         }
                         tokens.push_back(std::string(1, input[i]));
+                        // if (mode != Mode::None) {
+                        //         tokens.push_back(")");
+                        //         mode = Mode::None;
+                        // }
                         break;
                 case ' ':
                 case ',':
@@ -161,10 +190,12 @@ std::vector<std::string> Tokenizer(std::string const & input)
                 case '@':
                         if (mode == Mode::Splice) {
                                 tokens[i] = "splice-unquote";
-                                break;
+                        } else {
+                                mode = Mode::Macro;
+                                tokens.push_back("(");
+                                tokens.push_back("deref");
                         }
-                        // tokens.push_back("(");
-                        // tokens.push_back("unquote");
+                        break;
                 default:
                         match += input[i];
                 }

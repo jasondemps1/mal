@@ -40,6 +40,25 @@ std::string pr_str(MalType* t)
                         strItem += ")";
         }
         break;
+
+        case MalType::Vector:
+        {
+                MalVector* coll = static_cast<MalVector*>(t);
+                if (DEBUG)
+                        std::cout << "VECTOR!" << std::endl;
+
+                strItem += "[";
+                for (size_t i = 0; i < coll->data.size(); ++i) {
+                        strItem += pr_str(coll->data[i]);
+                        strItem += " ";
+                }
+                if (coll->data.size() > 0)
+                        strItem[strItem.find_last_of(" ")] = ']';
+                else
+                        strItem += "]";
+        }
+        break;
+
         default:
                 std::cout << "Unhandled Type currently" << std::endl;
         }

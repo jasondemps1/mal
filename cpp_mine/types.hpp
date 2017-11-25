@@ -3,11 +3,12 @@
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 class MalType
 {
 public:
-        enum T {Nil, Bool, Number, String, Symbol, List};
+        enum T {Nil, Bool, Number, String, Symbol, List, Vector, Map};
 
         MalType(T type) :
                 _type(type) {}
@@ -73,6 +74,29 @@ public:
                 MalType(MalType::List), data(vec) {}
         virtual ~MalList() { data.clear(); }
         std::vector<MalType*> data;
+};
+
+struct MalVector : public MalType
+{
+public:
+        MalVector() :
+                MalType(MalType::Vector) {}
+        MalVector(std::vector<MalType*> vec) :
+                MalType(MalType::Vector), data(vec) {}
+        virtual ~MalVector() { data.clear(); }
+        std::vector<MalType*> data;
+};
+
+struct MalMap : public MalType
+{
+public:
+        MalMap() :
+                MalType(MalType::Map) {}
+        MalMap(std::unordered_map<MalType*, MalType*> vec) :
+                MalType(MalType::Map), data(vec) {}
+        virtual ~MalMap() { data.clear(); }
+        std::unordered_map<MalType*, MalType*> data;
+        //std::vector<MalType*> data;
 };
 
 #endif

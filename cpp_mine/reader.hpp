@@ -29,6 +29,7 @@ MalType* Read_Str(std::string const & input);
 MalType* Read_Form(Reader & r);
 MalType* Read_Atom(Reader & r);
 MalList* Read_List(Reader & r);
+MalVector* Read_Vector(Reader & r);
 std::vector<std::string> Tokenizer(std::string const & input);
 
 #endif
